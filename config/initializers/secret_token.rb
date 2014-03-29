@@ -9,4 +9,20 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-MinoguesBeverage::Application.config.secret_key_base = 'f6ee59293262e0c5c107a623d7d1a0e6ef7baec67ef8504a23b13793c568df321857275d8945502b608afcfc444c74ed8e28c9183dba4e1b9ab469eb73fe3cf1'
+
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+MinoguesBeverage::Application.config.secret_key_base = secure_token
